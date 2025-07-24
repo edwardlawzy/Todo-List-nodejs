@@ -12,9 +12,6 @@ jobs:
       - name: build image
         run:
           docker build ./ -t edwardmaged/fortstarktest:latest
-      - name: docker auth
-        run:
-          docker login -u edwardmaged -p P@ssw0rdP@ssw0rd
       - name: push image to docker hub
-        run: 
-          docker push edwardmaged/fortstarktest:latest
+        run:
+          docker login -u edwardmaged -p P@ssw0rdP@ssw0rd && docker push edwardmaged/fortstarktest:latest
