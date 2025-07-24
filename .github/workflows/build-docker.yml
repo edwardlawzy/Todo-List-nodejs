@@ -5,7 +5,7 @@ on:
 
 jobs:
   publish_images:
-    runs-on: node:22.17.1
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
