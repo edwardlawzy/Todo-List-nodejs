@@ -1,10 +1,7 @@
 name: Build and Publish image to a private Docker Hub registry
 on:
   push:
-    branches:
-      - main
-    path:
-      - 'Dockerfile'
+    branches: ["master"]
 
 jobs:
   publish_images:
