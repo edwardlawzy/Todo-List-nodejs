@@ -8,8 +8,8 @@ RUN npm install mongodb
 
 COPY . .
 
-ENV PORT=8080
+ENV PORT=4000
 
-EXPOSE 8080
+EXPOSE 4000
 
 CMD [ "npm", "start" ]
