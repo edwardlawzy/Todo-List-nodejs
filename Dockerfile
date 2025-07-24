@@ -12,4 +12,4 @@ ENV PORT=4000
 
 EXPOSE 4000
 
-CMD [ "npm", "start", "echo 1" ]
+CMD [ "npm", "start" ]
