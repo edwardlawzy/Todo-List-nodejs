@@ -1,0 +1,21 @@
+name: Build and Publish image to a private Docker Hub registry
+on:
+  push:
+    branches:
+      - main
+    path:
+      - Dockerfile
+
+jobs:
+  publish_images:
+    runs-on: node:22.17.1
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build image
+        run:
+          docker build ./ -t edwardmaged/fortstarktest:latest
+      - name: push image to docker hub
+        run:
+          docker login -u edwardmaged -p P@ssw0rdP@ssw0rd
+          docker push edwardmaged/fortstarktest:latest
