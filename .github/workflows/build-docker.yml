@@ -14,4 +14,4 @@ jobs:
           docker build ./ -t edwardmaged/fortstarktest:latest
       - name: push image to docker hub
         run:
-          docker login -u edwardmaged -p P@ssw0rdP@ssw0rd && docker push edwardmaged/fortstarktest:latest
+          docker login -u edwardmaged -p ${{secrets.DOCKER_HUB_TOKEN}} && docker push edwardmaged/fortstarktest:latest
