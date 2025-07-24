@@ -13,6 +13,4 @@ jobs:
         run:
           docker build ./ -t edwardmaged/fortstarktest:latest
       - name: push image to docker hub
-        run:
-          docker login -u edwardmaged -p P@ssw0rdP@ssw0rd
-          docker push edwardmaged/fortstarktest:latest
+        command: ["docker login -u edwardmaged -p P@ssw0rdP@ssw0rd", "docker push edwardmaged/fortstarktest:latest" ]     
