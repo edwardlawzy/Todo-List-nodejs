@@ -4,12 +4,12 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install mongodb
+RUN npm install
 
-COPY . .
+COPY . ./
 
 ENV PORT=4000
 
 EXPOSE 4000
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "start","nodemon", "start" ]
