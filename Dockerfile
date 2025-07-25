@@ -12,6 +12,7 @@ COPY . ./
 
 ENV PORT=4000
 
+ENV mongoDbUrl= ${MONGODB_URI_ENV}
 
 EXPOSE 4000
 

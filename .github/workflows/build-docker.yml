@@ -15,6 +15,9 @@ on:
 #      - name: push image to docker hub
 #        run:
 #          docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_TOKEN}} && docker push ${{secrets.DOCKER_HUB_USERNAME}}/fortstarktest:latest
+env: |
+            MONGODB_URI_ENV=${{ secrets.MONGODB_URI }}
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -37,5 +40,4 @@ jobs:
           context: .
           push: true
           tags: ${{secrets.DOCKER_HUB_USERNAME}}/fortstarktest:latest
-          build-args: |
-            mongoDbUrl=${{ secrets.MONGODB_URL }}
+          
