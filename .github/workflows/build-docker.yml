@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v4
       - name: build image
         run:
-          docker build ./ -t edwardmaged/fortstarktest:latest
+          docker build ./ -t ${{secrets.DOCKER_HUB_USERNAME}}/fortstarktest:latest
       - name: push image to docker hub
         run:
-          docker login -u edwardmaged -p ${{secrets.DOCKER_HUB_TOKEN}} && docker push edwardmaged/fortstarktest:latest
+          docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_TOKEN}} && docker push edwardmaged/fortstarktest:latest
