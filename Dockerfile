@@ -12,6 +12,8 @@ COPY . ./
 
 ENV PORT=4000
 
+ENV mongoDbUrl=${{secrets.MONGODB_URI}}
+
 EXPOSE 4000
 
-CMD [ "npm", "start","nodemon", "start" ]
+CMD [ "npm", "start"]
