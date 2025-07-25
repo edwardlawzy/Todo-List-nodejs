@@ -12,7 +12,6 @@ COPY . ./
 
 ENV PORT=4000
 
-ENV mongoDbUrl=${{secrets.MONGODB_URI}}
 
 EXPOSE 4000
 
