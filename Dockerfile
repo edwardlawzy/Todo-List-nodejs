@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
+RUN --mount=type=secret,id=MongoDBURL,env=MONGODB_URL
+
 RUN npm install && npm cache clean --force
 
 COPY . ./
