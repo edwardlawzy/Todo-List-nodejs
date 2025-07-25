@@ -2,8 +2,6 @@ name: Build and Publish image to a private Docker Hub registry
 on:
   push:
     branches: ["master"]
-env:
-  MongoDBURL = ${{secrets.MONGODB_URL}}
 jobs:
   publish_images:
     runs-on: ubuntu-latest
