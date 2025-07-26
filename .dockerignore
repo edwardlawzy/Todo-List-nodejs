@@ -7,3 +7,4 @@ Dockerfile
 README.md
 README.txt
 watchtower/
+ansible/
