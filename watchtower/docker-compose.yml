@@ -1,0 +1,10 @@
+version: "3.4"
+services:
+  watchtower:
+    image: containrrr/watchtower
+#    environment:
+#        DOCKER_CONFIG: /config.json
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+#      - /etc/watchtower/config.json:/config.json
+    command: --interval 5

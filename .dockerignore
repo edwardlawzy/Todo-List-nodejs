@@ -1,6 +1,9 @@
 .env
+_vm.env
+docker-compose.yml
 Dockerfile
 .git
 .gitignore
 README.md
 README.txt
+watchtower/
