@@ -9,3 +9,4 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - .\config.json:/config.json
     command: --interval 5
+    #test
