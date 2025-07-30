@@ -68,7 +68,8 @@ by using `kubectl apply -f /kubernetes/secrets/secret-mongodb.yaml  && kubectl a
 
 9. And finally to get the pod IP and port use `minikube service todo-app-node-service --url`
 
-## Screenshots
+## Flowchart
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+<img width="886" height="610" alt="FortStark_Assessment1 (3)" src="https://github.com/user-attachments/assets/9ebca81d-67b7-4e45-9757-4a2a98fcea85" />
 
