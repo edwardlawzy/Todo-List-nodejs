@@ -1,109 +1,74 @@
 
-## Documentation
+# FortStark DevOps Internship Assessment: Todo-List-nodejs
 
-[Documentation](https://linktodocumentation)
-
-📝 To-Do List nodeJs
-
-The to-do list application is a web-based application that allows users to create and manage a list of tasks. The user interface consists of a form to add new tasks, a list of all tasks, and controls to mark tasks as complete or delete them.
-
-To create the application, Node.js is used to set up the server and handle the logic of the application. Express.js is used to create the routes for the application, allowing the user to interact with the application through a web browser. EJS is used to create the views for the application, allowing the user to see the list of tasks and the form to add new tasks. CSS is used to style the application, making it visually appealing and easy to use.
-
-MongoDB and Mongoose are used to store the tasks in a database, allowing the user to add, delete, and update tasks as needed. Nodemon is used to monitor changes to the code and automatically restart the server, making it easy to develop and test the application.
-
-When the user adds a new task using the form, Node.js and Express.js handle the request and store the task in the database using Mongoose. When the user views the list of tasks, EJS displays the tasks from the database in a list on the web page. When the user marks a task as complete or deletes a task, Node.js and Express.js handle the request and update the database using Mongoose.
-
-Overall, the todo list application using Node.js, Express.js, EJS, CSS, JavaScript, MongoDB, Mongoose, and Nodemon can be a great way to create a functional and interactive web application that allows users to manage their tasks online. With the right combination of technologies, it is possible to create an application that is both functional and aesthetically pleasing, making it easy for users to manage their tasks in a convenient and efficient way.
-
-Technologies Used: NodeJS, ExpressJS, EJS, CSS, JavaScript, Nodemon, MongoDB, Mongoose.
-## Demo
-
-Under process...
-## Authors
-
-- [@AnkitVishwakarma](https://github.com/Ankit6098)
+This is the FortStark DevOps Internship Assessment submission. In this submission,  we demonstrate the implementation of a CI/CD pipeline using Github Actions, Ansible, Docker Compose, Watchtower, Kubernetes and ArgoCD
 
 
-## Features
+## Prerequisites
+* A GitHub account.
+* A Docker Hub account.
+* A MongoDB Atlas database.
+## Part 1
 
-- Create, Update, and Delete Tasks: Enable users to create new tasks, update existing tasks (e.g., mark as completed, edit task details), and delete tasks they no longer need.
-- Task Categories provides Implement the ability for users to categorize their tasks into different categories (e.g., work, personal, shopping) or assign labels/tags to tasks for better organization and filtering.
-- MongoDb to store your the user data
-## Run Locally
+* We first need to create a MongoDB database and put the URI in the .env file. The .env will not be pushed to the repo so you need to create your own.
+* To dockerize the image, we need to create a docker file and a docker ignore file. We used a node alpine image to be light weight and we installed curl during the building process because we are going to need it for healthcheck.
+* We created a Github Action Workflow that is triggered with any commit & push to the main repo which does the following:
+     1. Clones the repo, 
+     2. Sets up Docker Builx 
+     3. Update the deployment.yaml in another repo called "ArgoCD_Deployment" with the updated image tag and then commit and push the edited file to the repo.
+     4. Log into Docker Hub and Build & Push the new image under 2 tags: latest & randomly generated string.
+* Explanation: We built the image with 2 tags because for ArgoCD to pull and deploy the new image, it has to be a new name but that would break watchtower. So this way both implementations are still functioning
+## Part 2
+* We create a Linux VM on our local machine using Oracle VirtualBox and assigned a static IP to it.
+* Ansible can't be installed directly on Windows, So we installed it on Windows Subsystem for Linux (WSL) and it connects to our VM using SSH. We created 2 playbooks depending on the implementation wanted.
+The initial part is the same for both playbooks and it does the following:
+1. The playbook will ask for privilege escalation at the start and then checks the type of the linux family. If it's debian it will use apt to update and upgrade the packages and if it is redhat, it will use yum.
+2. Install all of Docker dependencies: apt-transport-https, ca-certificates, curl, gnupg, lsb-release.
+3. Add Docker's official GPG key to the system's trusted keys.
+4. Add Docker's official APT repository to the system's sources list.
+5. Install the core Docker components: docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin.
+6. Add the current Ansible user (the user that SSHed into the VM) to the 'docker' group.
+7. Starts Docker service and configure it to start on boot.
+8. Copy _vm.env to VM and rename it to .env.
+9. Copy the docker .config file to the VM
 
-Clone the project
+Explanation: The app looks for an environment variable for mongodb uri (check _example.env file), so we copy it to the VM from our local machine. As for Docker, it looks for the encoded auth key in the .config file.
 
-```bash
-  git clone https://github.com/Ankit6098/Todos-nodejs
-```
+## Part 3: Using Docker Compose
+In the docker compose file, it pulls the image with tag `:latest` from our private docker hub registry, maps port 4000 to 8080 on our local machine and performs the healthchecks on the container by using `curl -f http://localhost:4000` to see if the app is up and running properly. All of this is also automated using the Ansible playbook.
+The playbook does the following steps to automate the deployment using docker compose.
+1. Copy the Docker Compose configuration file (`docker-compose.yml`) to the VM.
+2. Run the Docker Compose application in detached mode.
+3. Copy the Watchtower configuration folder to the VM.
+4.  Run the Watchtower Docker container and it will check the docker registry for changes every 5 seconds and with the cleanup flag enabled.
 
-Go to the project directory and open index.html file
+Explanation on why we used Watchtower: It's lightweight, easy to configure & deploy and it gets the job done for small environments but it is not recommended for large environments or enterprise use.
 
-```bash
-  cd Todos-nodejs
-```
+## Part 4: Using Kubernetes and ArgoCD
+The following steps are added to the Ansible playbook to automate this implementation.
+1. Install Minikube by pulling the `minikube-linux-amd64` file, installing it and then deleting the file. The minikube installer will install kubectl and it's dependencies.
+2. Start minikube.
+3. Install ArgoCD by creating the `argocd` namespace and applying the argocd services in the argocd namespace by using this command:
+`kubectl create namespace argocd && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+`
 
-Install the packages
+4. Add 1 minute delay for ArgoCD server to start.
 
-```bash
-  npm install / npm i
-```
+5. Port forward the ArgoCD Server from port 443 to port 8000 by using the following command.
+`kubectl port-forward svc/argocd-server -n argocd 8000:443 &`
+and to access the server use `localhost:8000`
 
-Start the Server
+6. Copy the Kubernetes folder from local machine to VM which has a secrets.yml files that we will add to Kubernetes (check `Kubernetes/secrets` for examples).
 
-```bash
-    npm start / nodemon start
-```
-## Acknowledgements
+7. Create the MongoDB URI and Docker Hub secrets and delete the files
+by using `kubectl apply -f /kubernetes/secrets/secret-mongodb.yaml  && kubectl apply -f /kubernetes/secrets/secret-docker.yaml && rm -r /kubernetes/secrets`
 
- - [nodemon](https://nodemon.io/)
- - [mongoDb](https://www.mongodb.com/)
- - [mongoose](https://mongoosejs.com/)
+8. Apply Application.yaml which will deploy our kubernetes environment and then apply service.yaml which will give us access to the pod.
+`kubectl apply -f /kubernetes/application.yaml && kubectl apply -f /kubernetes/service.yaml`
 
+9. And finally to get the pod IP and port use `minikube service todo-app-node-service --url`
 
 ## Screenshots
 
-![225232515-4c100b6b-52e4-40f8-a6d4-85e30dc2f5e7](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/487f548f-7ca6-4183-9443-c88c9f79c3f0)
-![225232960-da554f1f-ba4a-41f8-9856-edaebe339d76](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/25515d2e-1d72-498d-8044-59a01c6b9127)
-![225238829-05433362-5b16-454c-92d5-5e536fe6912e](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/316d15ca-1fe8-4581-80b1-fc316340bba6)
-![225239140-226f8eae-d8b8-4055-8a68-d85d523c2422](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/44a0c418-449e-446f-8a8e-3c4e14fca8bf)
-![225239221-caf86f3d-ef17-4d18-80a6-c72123ff5444](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/2ee90ab0-95d4-44f4-80ac-b17b088ac1ce)
-![225239406-98b7ba7d-df97-4d27-bb66-596a32187d87](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/960ff353-1ce9-4ef8-94e4-10af09184fd2)
-![225239841-4b5d77f0-4a54-4339-b6b3-b6a1be6776b5](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/f5ffc3b8-480f-4d11-9a0b-c469e3c17e8e)
-
-
-## Related
-
-Here are some other projects
-
-[Alarm CLock - javascript](https://github.com/Ankit6098/Todos-nodejs)\
-[IMDb Clone - javascript](https://github.com/Ankit6098/IMDb-Clone)
-
-
-## 🚀 About Me
-I'm a full stack developer...
-
-
-# Hi, I'm Ankit! 👋
-
-I'm a full stack developer 😎 ... Love to Develop Classic Unique fascinating and Eye Catching UI and Love to Create Projects and Building logics.
-## 🔗 Links
-[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ankithub.me/Resume/)
-
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColorwhite=)](https://www.linkedin.com/in/ankit-vishwakarma-6531221b0/)
-
-
-## Other Common Github Profile Sections
-🧠 I'm currently learning FullStack Developer Course from Coding Ninjas
-
-📫 How to reach me ankitvis609@gmail.com
-
-
-## 🛠 Skills
-React, Java, Javascript, HTML, CSS, Nodejs, ExpressJs, Mongodb, Mongoose...
-
-
-## Feedback
-
-If you have any feedback, please reach out to us at ankitvis609@gmail.com
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
 
