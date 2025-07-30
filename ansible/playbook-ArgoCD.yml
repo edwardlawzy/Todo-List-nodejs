@@ -113,7 +113,7 @@
 
     - name: Apply application.yaml & service.yaml #The deployment.yaml should be applied automatically from github
       ansible.builtin.command:
-        cmd: kubectl apply -f /kubernetes/application.yaml
+        cmd: kubectl apply -f /kubernetes/application.yaml && kubectl apply -f /kubernetes/service.yaml
 
 # To connect to the App Container IP use "minikube service todo-app-node-service --url" to get the IP with the Port
 
