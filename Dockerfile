@@ -6,7 +6,7 @@ COPY package*.json ./ # Copy package.json and any package-lock.json files into t
 
 RUN npm install && npm cache clean --force && apk add --no-cache curl Install Node.js dependencies, clean the npm cache, and install curl.
 
-COPY . ./ # Copy the rest of the application's source code into the working directory.
+COPY . ./ # Copy the rest of the application source code into the working directory.
 
 ENV PORT=4000 # Set an environment variable named PORT with the value 4000.
 
