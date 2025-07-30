@@ -73,6 +73,11 @@
          src: /mnt/d/Data/DevOps/FortStark_Assessment/Todo-List-nodejs/_vm.env
          dest: /home/fortstark/.env
 
+    - name: Copy Docker .config File
+      ansible.builtin.copy:
+         src: /mnt/d/Data/DevOps/FortStark_Assessment/Todo-List-nodejs/watchtower/.config
+         dest: /home/fortstark/.docker/.config
+
 ############################################################################################################################         
 ################################################        USING COMPOSE       ################################################
 ############################################################################################################################         
