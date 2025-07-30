@@ -3,6 +3,7 @@
 - name: Configure Linux VM and Install Docker
   hosts: DockerServers
   become: yes 
+  # Enables privilege escalation
 
   tasks:
     - name: Update apt cache and upgrade packages
@@ -34,6 +35,8 @@
         state: present
       when: ansible_os_family == "Debian"
 
+
+# This allows apt to find and install Docker packages.
     - name: Add Docker APT repository
       ansible.builtin.apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
@@ -52,6 +55,7 @@
         update_cache: yes
       when: ansible_os_family == "Debian"
 
+# Task to add the current Ansible user (the user that SSHed into the VM) to the 'docker' group.
     - name: Add current user to docker group
       ansible.builtin.user:
         name: "{{ ansible_user }}"
