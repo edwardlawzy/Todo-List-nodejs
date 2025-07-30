@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app-node
+  labels:
+    app: todo-app-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-app-node
+  template:
+    metadata:
+      labels:
+        app: todo-app-node
+    spec:
+      imagePullSecrets:
+        - name: docker-pull-secret
+      containers:
+        - name: todo-app-node
+          image: edwardmaged/fortstarktest:latest
+          ports:
+            - containerPort: 4000
+          env:
+            - name: mongoDbUrl
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-uri-secret
+                  key: uri
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 5
