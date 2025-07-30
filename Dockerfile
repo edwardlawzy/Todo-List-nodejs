@@ -12,4 +12,4 @@ ENV PORT=4000 # Set an environment variable named PORT with the value 4000.
 
 EXPOSE 4000 # Inform Docker that the container will listen on port 4000 at runtime.
 
-CMD [ "npm", "start"] # This will run the "start" script defined in your package.json
+CMD [ "npm", "start"] # This will run the start script defined in your package.json
