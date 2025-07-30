@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    image: ${DOCKER_HUB_USERNAME}/fortstarktest:latest
+    ports:
+      - "8080:4000"
+    environment:
+      # Pass MongoDB URI as an environment variable
+      mongoDbUrl: "${MONGODB_URI}" # Will be read from .env on the VM or passed directly
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/"] # Or an API endpoint if one exists
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s # Give the app some time to start before checking
+    restart: unless-stopped # Always restart unless explicitly stopped
+
