@@ -1,1 +1,6 @@
 node_modules/
+.env
+_vm.env
+watchtower/config.json
+ansible/inventory.yml
+kubernetes/secrets/secret*.yaml
