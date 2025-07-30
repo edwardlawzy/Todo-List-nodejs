@@ -2,7 +2,7 @@ name: Build and Publish image to a private Docker Hub registry
 on:
   push:
     branches: ["master"]
-
+#
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
