@@ -1,3 +1,8 @@
+#####################################################################################
+### ArgoCD doesn't use this file, It uses the files in the ArgoCD_Deployment repo ###
+###                  This file is kept for visibility only                        ###
+#####################################################################################
+
 apiVersion: v1
 kind: Service
 metadata:
