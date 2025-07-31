@@ -2,21 +2,30 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: todo-app-node
+  # The name of this Argo CD Application.
   namespace: argocd
+  # Set the application with namespace argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/edwardlawzy/ArgoCD_Deployment.git
+    # The URL of the complementary github repo where the Kubernetes manifests are stored
     targetRevision: HEAD
+    # ArgoCD will sync with the latest commit to the repo
     path: .
+    # The path within the github repo where the Kubernetes manifests are located
   destination:
     server: https://kubernetes.default.svc
+    # The Kubernetes API server URL where the application should be deployed
     namespace: default
   
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
+    # Argo CD will automatically create the target namespace if it does not already exist
 
     automated:
       selfHeal: true
+      # This will maintain the state describe in the github repo so if the user manual deletes a pod, it will re-deploy it.
       prune: true
+      #Argo CD will automatically delete resources from the destination cluster if they are no longer defined in the github repo.
