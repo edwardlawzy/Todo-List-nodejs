@@ -14,4 +14,5 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 4000
-  type: NodePort # Or LoadBalancer if on cloud, but NodePort for VM
+  type: NodePort 
+  # Create a NodePort that we can use to access the service
