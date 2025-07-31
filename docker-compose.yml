@@ -3,13 +3,16 @@ version: '3.8'
 services:
   app:
     image: ${DOCKER_HUB_USERNAME}/fortstarktest:latest
+    #The docker hub username is stored in a Github Actions Secret (this is optional becase the docker registry is private anyway)
     ports:
       - "8080:4000"
     environment:
       # Pass MongoDB URI as an environment variable
-      mongoDbUrl: "${MONGODB_URI}" # Will be read from .env on the VM or passed directly
+      mongoDbUrl: "${MONGODB_URI}" 
+      # Will be read from .env on the VM
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4000/"] # Or an API endpoint if one exists
+      test: ["CMD", "curl", "-f", "http://localhost:4000/"] 
+      # Healthchecks the container on port 4000 using curl. Port 4000 is used not 8080 because this command will run inside the container.
       interval: 30s
       timeout: 10s
       retries: 3
