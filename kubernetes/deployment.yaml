@@ -11,6 +11,7 @@ metadata:
     app: todo-app-node
 spec:
   replicas: 1
+  # Number of desired pods
   selector:
     matchLabels:
       app: todo-app-node
@@ -24,15 +25,20 @@ spec:
       containers:
         - name: todo-app-node
           image: edwardmaged/fortstarktest:d45c8cb318c5cfb18aa8bc72464c40444134f552
+          # Latest docker image with randomly generated string
           ports:
             - containerPort: 4000
+            # Ports exposed by the container
           env:
+          # Environment variables for the container
             - name: mongoDbUrl
               valueFrom:
                 secretKeyRef:
+                # Get value from the secret applied
                   name: mongodb-uri-secret
                   key: uri
           livenessProbe:
+          # Healthchecks the container on port 4000 using HTTP
             httpGet:
               path: /
               port: 4000
