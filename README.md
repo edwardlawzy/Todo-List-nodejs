@@ -39,7 +39,7 @@ In the docker compose file, it pulls the image with tag `:latest` from our priva
 The playbook does the following steps to automate the deployment using docker compose.
 1. Copy the Docker Compose configuration file (`docker-compose.yml`) to the VM.
 2. Run the Docker Compose application in detached mode.
-3. Copy the Watchtower configuration folder to the VM.
+3. Copy the Watchtower configuration folder to the VM. Note that the json format need to be in one line otherwise it might cause the docker authentication to fail. and you need to create you encoded auth string by using this command `echo "YOUR_USERNAME:YOUR_PASSWORD" | base64`
 4. Run the Watchtower Docker container and it will check the docker registry for changes every 5 seconds with the cleanup flag enabled.
 
 Explanation on why we used Watchtower: It's lightweight, easy to configure & deploy and it gets the job done for small environments. It is not recommended for large environments or enterprise use but it's perfect for our use case.
