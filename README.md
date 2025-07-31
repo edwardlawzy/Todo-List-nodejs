@@ -34,7 +34,7 @@ The initial part is the same for both playbooks and it does the following:
 
 Explanation: The app looks for an environment variable for mongodb uri (check `_example.env` file), so we copy it to the VM from our local machine. The `.env` is made so we can test the app localy and `_vm.env` is made so we can seperate between the 2 environment variables (the local variables and the VM variables). As for Docker, it looks for the encoded auth key in the .config file.
 
-## Part 3: Using Docker Compose
+## Part 3: Using Docker Compose & Watchtower
 In the docker compose file, it pulls the image with tag `:latest` from our private docker hub registry, maps port 4000 to 8080 on our local machine and performs the healthchecks on the container by using `curl -f http://localhost:4000` to see if the app is up and running properly. All of this is also automated using the Ansible playbook.
 The playbook does the following steps to automate the deployment using docker compose.
 1. Copy the Docker Compose configuration file (`docker-compose.yml`) to the VM.
