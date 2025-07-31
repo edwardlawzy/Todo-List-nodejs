@@ -4,8 +4,12 @@ services:
     image: containrrr/watchtower
     environment:
       - WATCHTOWER_CLEANUP= true
+      # We enable the cleanup flag because we don't want the old images to be stored which will take a lot of storage with time
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - .\config.json:/config.json
+      # This will mount the config.json file to the container so that docker can authenticate the image pull
     command: --interval 5
+    # Configure watchtower to check for new image update every 5 seconds
+    # This file is now obsolete because we use a command in the ansible playbook to run watchtower but we kept the file if you want to you use docker compose
