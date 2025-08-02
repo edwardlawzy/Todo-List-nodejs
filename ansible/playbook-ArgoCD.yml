@@ -1,4 +1,5 @@
 
+
 ---
 - name: Configure Linux VM and Install Docker
   hosts: DockerServers
@@ -69,51 +70,57 @@
          src: /mnt/d/Data/DevOps/FortStark_Assessment/Todo-List-nodejs/_vm.env
          dest: /home/fortstark/.env
 
-    - name: Copy Docker .config File
-      ansible.builtin.copy:
-         src: /mnt/d/Data/DevOps/FortStark_Assessment/Todo-List-nodejs/watchtower/.config
-         dest: /home/fortstark/.docker/.config
-
 #########################################################################################################################################       
 ################################################        USING ARGOCD & Kubernetes        ################################################
 #########################################################################################################################################
 
-    - name: Install Minikube
-      ansible.builtin.command:
-         cmd: curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64 && sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+    - name: Download Minikube
+      ansible.builtin.shell: |
+         curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64 && sudo install /home/fortstark/minikube-linux-amd64 /usr/local/bin/minikube 
+
+    - name: Install Kubectl
+      ansible.builtin.shell: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
     - name: Start Minikube
-      ansible.builtin.command:
-        cmd: minikube start
+      ansible.builtin.shell: "minikube start"
+      become: no
  
-    - name: Install ArgoCD
-      ansible.builtin.command:
-        cmd: kubectl create namespace argocd && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    - name: Install Argo CD with minikube's kubectl
+      ansible.builtin.shell: |
+          minikube kubectl -- create namespace argocd && \
+          minikube kubectl -- apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      become: no
+ 
 
     - name: Wait for 1 Minute for ArgoCD Server to Start
       ansible.builtin.pause:
-        minutes: 1
+        minutes: 3
 
     - name: Port Forward ArgoCD Server
-      ansible.builtin.command:
-        cmd: kubectl port-forward svc/argocd-server -n argocd 8000:443
+      ansible.builtin.shell: |
+        kubectl port-forward svc/argocd-server -n argocd 8000:443 &
       
       #To access argocd go to localhost:8000 on VM and sign in with username "admin".
-      #To get the password use "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d"
+      #To get the password use "kubectl get secret argocd-initial-admin-secret -n argocd -o yaml" and decode it with "echo <ENCODED_PASSWORD> | base64 --decode"
 
     - name: Copy Kubernetes Folder
       ansible.builtin.copy:
        src: /mnt/d/Data/DevOps/FortStark_Assessment/Todo-List-nodejs/kubernetes/
-       dest: /home/fortstark/
+       dest: /home/fortstark/kubernetes
 
-    - name: Create MongoDB URI & Docker Hub Secret & Delete the Files
-      ansible.builtin.command:
-        cmd: kubectl apply -f /kubernetes/secrets/secret-mongodb.yaml  && kubectl apply -f /kubernetes/secrets/secret-docker.yaml && rm -r /kubernetes/secrets
-        #Output should be "secret/mongodb-uri-secret created" & "secret/docker-pull-secret created"
+    - name: Create MongoDB URI & Docker Hub Secret
+      ansible.builtin.shell: |
+        minikube kubectl -- apply -f /home/fortstark/kubernetes/secrets/secret-mongodb.yaml  && minikube kubectl -- apply -f /home/fortstark/kubernetes/secrets/secret-docker.yaml
+      become: no    
+    #Output should be "secret/mongodb-uri-secret created" & "secret/docker-pull-secret created"
+
+    - name: Delete Secrets
+      ansible.builtin.shell: "sudo rm -r /home/fortstark/kubernetes/secrets"
 
     - name: Apply application.yaml & service.yaml #The deployment.yaml should be applied automatically from github
-      ansible.builtin.command:
-        cmd: kubectl apply -f /kubernetes/application.yaml && kubectl apply -f /kubernetes/service.yaml
-
+      ansible.builtin.shell: |
+        minikube kubectl -- apply -f /home/fortstark/kubernetes/application.yaml && minikube kubectl -- apply -f /home/fortstark/kubernetes/service.yaml
+      become: no
 # To connect to the App Container IP use "minikube service todo-app-node-service --url" to get the IP with the Port
 
