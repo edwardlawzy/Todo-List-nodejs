@@ -1,5 +1,5 @@
 
-# FortStark DevOps Internship Assessment: Todo-List-nodejs
+# FortStak DevOps Internship Assessment: Todo-List-nodejs
 
 This is the FortStark DevOps Internship Assessment submission. In this submission,  we demonstrate the implementation of a CI/CD pipeline using Github Actions, Ansible, Docker Compose, Watchtower, Kubernetes and ArgoCD
 
