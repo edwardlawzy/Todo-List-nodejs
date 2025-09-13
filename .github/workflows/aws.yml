@@ -38,5 +38,5 @@ jobs:
           docker push ${{secrets.ECR_REG}}:nginx
 
       - name: push new deployment
-        run: aws ecs update-service --force-new-deployment
+        run: aws ecs update-service --cluster ${{secrets.CLUSTER}} --service ${{secrets.SERVICE}} --force-new-deployment --region us-east-1 &
       
