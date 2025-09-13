@@ -36,3 +36,7 @@ jobs:
         run: |
           docker build -t ${{secrets.ECR_REG}}:nginx .
           docker push ${{secrets.ECR_REG}}:nginx
+
+      - name: push new deployment
+        run: aws ecs update-service --force-new-deployment
+      
